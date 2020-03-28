@@ -42,6 +42,7 @@ def requests(request):
 
     dictionary['Params'] = list_message
     print(json.dumps(dictionary, indent=2))
+    return
 
 
 requests(get)
