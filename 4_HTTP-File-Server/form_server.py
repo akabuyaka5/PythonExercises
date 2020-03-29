@@ -1,6 +1,6 @@
-from html.parser import HTMLParser
-import re
+import html
 import socket
+from html.parser import HTMLParser
 
 from Requests import requests
 
@@ -19,14 +19,13 @@ while not sendall:
         data = connection.recv(1024)
         print('RECEIVED:', data.decode())
         request = requests(data.decode())
-
-        message = request['Params']['message']
-
+        form_name = request['URL']
+        html_content = open('html%s' % form_name)
         h = html.parser
-        message = h.unescape('<!DOCTYPE html><html><body><h2>HTML Forms</h2><form action="/register">  <label for="fname">First name:</label><br>  <input type="text" id="fname" name="fname" value="John"><br>  <label for="lname">Last name:</label><br>  <input type="text" id="lname" name="lname" value="Doe"><br><br>  <input type="submit" value="Submit"></form><p>If you click the "Submit" button, the form-data will be sent to a page called "/register".</p></body></html></html>')
-
-
+        form = html_content.read()
+        message = h.unescape(form)
         length = len(message)
+
         string = "HTTP/1.1 200 OK\r\nCache-Control: no-store\r\nContent-Length: %d\r\nContent-Type: text/html; charset=utf-8\r\nConnection: close\r\n\r\n%s" % (
             length, message)
 

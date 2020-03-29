@@ -19,8 +19,12 @@ def requests(request):
             dictionary['Method'] = pal[0]
             dictionary['URL'] = pal[1]
             dictionary['Version'] = pal[2]
-            val = pal[1].split('=', 1)
-            list_message = {'message': val[1]}
+            if (line.__contains__('message')):
+                val = pal[1].split('=', 1)
+                list_message = {'message': val[1]}
+                text = True
+            else:
+                text = False
 
         elif line.__contains__('POST'):
             pal = line.split(' ')
@@ -39,10 +43,8 @@ def requests(request):
         else:
             val = line.split(':', 1)
             dictionary[val[0].strip()] = val[1].strip()
+    if (text):
+        dictionary['Params'] = list_message
 
-    dictionary['Params'] = list_message
     print(json.dumps(dictionary, indent=2))
-    return
-
-
-requests(get)
+    return dictionary
