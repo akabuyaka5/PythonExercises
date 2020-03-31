@@ -11,7 +11,7 @@ def requests(request):
     strip = re.sub('[\r]', '', request)
     strip = re.split('[\n]', strip)
     strip = list(filter(''.__ne__, strip))
-
+    text = False
     for line in strip:
 
         if line.__contains__('GET'):
@@ -23,8 +23,6 @@ def requests(request):
                 val = pal[1].split('=', 1)
                 list_message = {'message': val[1]}
                 text = True
-            else:
-                text = False
 
         elif line.__contains__('POST'):
             pal = line.split(' ')
@@ -40,11 +38,20 @@ def requests(request):
             val = line.split('=', 1)
             list_message = {val[0]: val[1]}
             dictionary['Params'] = list_message
+        elif line.__contains__('fname'):
+            name = line.split('&', 1)
+            dictionary['Params'] = {}
+            for i in range(len(name)):
+                val = name[i].split('=', 1)
+                dictionary['Params'].update({val[0]: val[1]})
+
+            # dictionary['Params'] = list_message
         else:
             val = line.split(':', 1)
             dictionary[val[0].strip()] = val[1].strip()
     if (text):
         dictionary['Params'] = list_message
 
+    print("Parser function:")
     print(json.dumps(dictionary, indent=2))
     return dictionary
